@@ -36,7 +36,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final StorageService storageService;
 
     // URL Base para imágenes (ajustada a tu configuración de API)
-private static final String BASE_URL = "http://147.79.87.94:8080/api/v1/uploads/";
+private static final String BASE_URL = "http://147.79.87.94:8085/api/v1/uploads/";
 
     public ProductoServiceImpl(ProductoRepository productoRepository,
                                CategoriaRepository categoriaRepository,
