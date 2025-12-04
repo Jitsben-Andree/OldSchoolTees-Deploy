@@ -1,0 +1,140 @@
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 30px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .animate-fadeInUp {
+
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+  .animate-shake {
+    animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+  }
+</style>
+
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+  <video
+    #bgVideo
+    autoplay
+    loop
+    muted
+    defaultMuted
+    playsinline
+    webkit-playsinline
+    x5-playsinline
+    preload="auto"
+    class="absolute inset-0 w-full h-full object-cover"
+    aria-hidden="true"
+  >
+    <source src="assets/video.mp4" type="video/mp4" />
+  </video>
+
+  <div class="absolute inset-0 bg-black/40"></div>
+
+
+  <div class="relative z-10 mx-auto w-full max-w-[520px] bg-white/90 p-8 rounded-lg shadow-2xl backdrop-blur-md animate-fadeInUp">
+    <h2 class="text-3xl font-bold text-center mb-6 text-gray-900">Iniciar Sesión</h2>
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
+      <div class="mb-5">
+        <label for="email" class="mb-2 block text-base font-medium text-[#07074D]">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="tu@email.com"
+          ngModel
+          #email="ngModel"
+          required
+          email
+          [class.border-red-500]="email.invalid && email.touched"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md transition duration-300 ease-in-out"
+        />
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="email.errors?.['required']">El email es requerido.</span>
+          <span *ngIf="email.errors?.['email']">Email inválido.</span>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label for="password" class="mb-2 block text-base font-medium text-[#07074D]">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="••••••••"
+          ngModel
+          #password="ngModel"
+          required
+          minlength="6"
+          [class.border-red-500]="password.invalid && password.touched"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md transition duration-300 ease-in-out"
+        />
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="password.errors?.['required']">La contraseña es requerida.</span>
+          <span *ngIf="password.errors?.['minlength']">Debe tener al menos 6 caracteres.</span>
+        </div>
+      </div>
+
+     
+      <div 
+        *ngIf="errorMessage" 
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4"
+        [class.animate-shake]="errorMessage"
+      >
+        <span>{{ errorMessage }}</span>
+        
+        <!-- LINK CONDICIONAL A DESBLOQUEO (TEXTO MODIFICADO) -->
+        <div *ngIf="errorMessage.includes('Tu cuenta ha sido bloqueada')" class="mt-2 text-sm">
+          <span>Se recomienda </span>
+          <a 
+            [routerLink]="['/unlock']" 
+            [queryParams]="{ email: loginForm.value.email || '' }"
+            class="font-medium text-indigo-600 hover:text-indigo-500 underline"
+          >
+            restablecer tu contraseña
+          </a>
+          <span>.</span>
+        </div>
+      </div>
+      <!-- FIN MENSAJE DE ERROR -->
+
+      <div>
+        <button
+          [disabled]="loginForm.invalid || isSubmitting"
+          class="hover:shadow-lg w-full rounded-md bg-indigo-600 py-3 px-8 text-center text-base font-semibold text-white outline-none disabled:bg-gray-400 transition duration-300 hover:scale-[1.03]"
+        >
+          <span *ngIf="isSubmitting; else notSubmitting">Ingresando...</span>
+          <ng-template #notSubmitting>Entrar</ng-template>
+        </button>
+      </div>
+
+      <div class="mt-4 text-center space-y-2">
+        <a routerLink="/unlock" class="text-sm text-indigo-600 hover:text-indigo-500 underline">
+          ¿Olvidaste tu contraseña?
+        </a>
+        <div class="text-sm text-gray-700">
+          ¿No tienes cuenta?
+          <a routerLink="/register" class="text-indigo-600 hover:text-indigo-500 underline font-medium">
+            Crear cuenta
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

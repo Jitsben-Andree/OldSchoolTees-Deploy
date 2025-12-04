@@ -1,0 +1,61 @@
+/* Enlace Base */
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.5rem;
+  color: #9ca3af; /* gray-400 */
+  transition: all 0.2s ease-in-out;
+  border-left: 3px solid transparent; /* Borde invisible inicial */
+}
+
+/* Hover State */
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+/* Enlace Activo (Golden Style) */
+.active-nav-link {
+  background: linear-gradient(90deg, rgba(247, 206, 70, 0.1) 0%, transparent 100%);
+  color: #ffffff;
+  border-left-color: #F7CE46; /* Borde dorado */
+}
+
+/* Iconos */
+.icon-container {
+  margin-right: 0.75rem;
+  transition: color 0.2s;
+  color: #6b7280; /* gray-500 */
+}
+
+/* Icono activo */
+.active-nav-link .icon-container {
+  color: #F7CE46;
+}
+
+/* Scrollbar del Sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #151528;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #2a2a45;
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3f3f5f;
+}
+
+/* Animación de Entrada para el contenido principal */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}

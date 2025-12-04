@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-gray-50 font-sans pt-8 pb-20">
+  
+  <!-- Header de Sección -->
+  <div class="container mx-auto px-6 mb-8">
+     <h1 class="text-4xl font-black text-[#151528] uppercase tracking-tighter">Catálogo Completo</h1>
+     <p class="text-sm text-gray-500 mt-2">Filtra y encuentra tu equipación retro ideal.</p>
+  </div>
+
+  <div class="container mx-auto px-6 flex flex-col lg:flex-row gap-8">
+     
+     <!-- 🟢 SIDEBAR FILTROS (Izquierda) -->
+     <aside class="w-full lg:w-1/4 flex-shrink-0">
+        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 sticky top-24">
+           
+           <div class="flex justify-between items-center mb-6">
+              <h3 class="font-bold text-[#151528] uppercase tracking-wider">Filtros</h3>
+              <button (click)="resetFilters()" class="text-xs text-[#F7CE46] hover:text-[#151528] font-bold underline">Limpiar</button>
+           </div>
+
+           <!-- 1. Buscador -->
+           <div class="mb-6">
+              <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Buscar</label>
+              <div class="relative">
+                 <input type="text" [(ngModel)]="searchTerm" placeholder="Ej. Milan, Ronaldinho..." 
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-4 pl-10 text-sm focus:outline-none focus:border-[#F7CE46] transition-colors">
+                 <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+           </div>
+
+           <!-- 2. Categorías -->
+           <div class="mb-6">
+              <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Equipo / Liga</label>
+              <select [(ngModel)]="selectedCategory" class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-[#F7CE46] cursor-pointer">
+                 <option value="all">Todas las Categorías</option>
+                 @for(cat of categories(); track cat.idCategoria) {
+                    <option [value]="cat.idCategoria">{{ cat.nombre }}</option>
+                 }
+              </select>
+           </div>
+
+           <!-- 3. Tallas -->
+           <div class="mb-6">
+              <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Talla</label>
+              <div class="flex flex-wrap gap-2">
+                 <button (click)="selectedSize.set('all')" [class.bg-[#151528]]="selectedSize() === 'all'" [class.text-white]="selectedSize() === 'all'" class="px-3 py-1 rounded border border-gray-200 text-xs font-bold hover:border-[#151528] transition-colors">Todos</button>
+                 <button (click)="selectedSize.set('S')" [class.bg-[#151528]]="selectedSize() === 'S'" [class.text-white]="selectedSize() === 'S'" class="px-3 py-1 rounded border border-gray-200 text-xs font-bold hover:border-[#151528] transition-colors">S</button>
+                 <button (click)="selectedSize.set('M')" [class.bg-[#151528]]="selectedSize() === 'M'" [class.text-white]="selectedSize() === 'M'" class="px-3 py-1 rounded border border-gray-200 text-xs font-bold hover:border-[#151528] transition-colors">M</button>
+                 <button (click)="selectedSize.set('L')" [class.bg-[#151528]]="selectedSize() === 'L'" [class.text-white]="selectedSize() === 'L'" class="px-3 py-1 rounded border border-gray-200 text-xs font-bold hover:border-[#151528] transition-colors">L</button>
+                 <button (click)="selectedSize.set('XL')" [class.bg-[#151528]]="selectedSize() === 'XL'" [class.text-white]="selectedSize() === 'XL'" class="px-3 py-1 rounded border border-gray-200 text-xs font-bold hover:border-[#151528] transition-colors">XL</button>
+              </div>
+           </div>
+
+           <!-- 4. Precio (Slider) -->
+           <div class="mb-2">
+              <div class="flex justify-between mb-2">
+                 <label class="text-xs font-bold text-gray-400 uppercase">Precio Máx.</label>
+                 <span class="text-xs font-bold text-[#151528]">{{ priceRange() | currency:'S/ ' }}</span>
+              </div>
+              <input type="range" min="0" max="1000" step="10" [(ngModel)]="priceRange" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#F7CE46]">
+           </div>
+
+        </div>
+     </aside>
+
+     <!-- 🔵 GRID DE PRODUCTOS (Derecha) -->
+     <main class="flex-1">
+        
+        <!-- Loading -->
+        @if (isLoading()) {
+           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              @for(i of [1,2,3,4,5,6]; track i) {
+                 <div class="h-80 bg-gray-200 rounded-lg animate-pulse"></div>
+              }
+           </div>
+        }
+
+        <!-- Grid -->
+        @if (!isLoading()) {
+           @if (filteredProducts().length > 0) {
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+                 
+                 @for (prod of filteredProducts(); track prod.id) {
+                    <div class="group cursor-pointer">
+                       <!-- Card Image -->
+                       <div class="relative aspect-[4/5] bg-white rounded-sm overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-500">
+                          <a [routerLink]="['/producto', prod.id]" class="block w-full h-full">
+                             <img [src]="prod.imageUrl || 'assets/placeholder.png'" 
+                                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 mix-blend-multiply"
+                                  onerror="this.src='https://placehold.co/500x650?text=No+Img'">
+                          </a>
+
+                          <!-- Badges -->
+                          <div class="absolute top-2 left-2 flex flex-col gap-1">
+                             @if(prod.nombrePromocion) { <span class="bg-[#F7CE46] text-black text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-sm">Oferta</span> }
+                             @if(prod.stock === 0) { <span class="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-sm">Sold Out</span> }
+                          </div>
+
+                          <!-- Quick Add -->
+                          <div class="absolute bottom-0 left-0 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                             <button (click)="onAddToCart(prod.id, prod.nombre)" 
+                                     [disabled]="!authService.isLoggedIn() || prod.stock === 0"
+                                     class="w-full py-3 bg-[#151528] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#F7CE46] hover:text-black transition-colors">
+                                {{ authService.isLoggedIn() ? 'Añadir al Carrito' : 'Login' }}
+                             </button>
+                          </div>
+                       </div>
+
+                       <!-- Info -->
+                       <div class="px-1">
+                          <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{{ prod.categoriaNombre || 'Retro' }}</p>
+                          <a [routerLink]="['/producto', prod.id]">
+                             <h2 class="text-sm font-bold text-[#151528] uppercase tracking-tight truncate group-hover:text-[#E50046] transition-colors">{{ prod.nombre }}</h2>
+                          </a>
+                          <div class="flex items-baseline gap-2 mt-1">
+                             <span class="text-base font-black text-[#151528]">{{ prod.precio | currency:'S/ ' }}</span>
+                             @if (prod.precioOriginal && prod.precioOriginal !== prod.precio) {
+                                <span class="text-xs text-gray-400 line-through">{{ prod.precioOriginal | currency:'S/ ' }}</span>
+                             }
+                          </div>
+                       </div>
+                    </div>
+                 }
+
+              </div>
+           } @else {
+              <!-- Empty State -->
+              <div class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-gray-200 rounded-xl text-center">
+                 <div class="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                 </div>
+                 <h3 class="text-lg font-bold text-gray-900">Sin resultados</h3>
+                 <p class="text-gray-500 text-sm mt-1 max-w-xs">No encontramos productos que coincidan con tus filtros. Intenta limpiar la búsqueda.</p>
+                 <button (click)="resetFilters()" class="mt-6 px-6 py-2 bg-[#151528] text-white text-xs font-bold uppercase rounded hover:bg-[#F7CE46] hover:text-black transition-colors">
+                    Ver Todo
+                 </button>
+              </div>
+           }
+        }
+
+     </main>
+  </div>
+</div>

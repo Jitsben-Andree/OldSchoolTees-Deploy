@@ -1,0 +1,317 @@
+<section id="inicio" class="page-background">
+  <div class="slider">
+    <div class="slides">
+      <!-- Radio buttons ocultos -->
+      <input type="radio" name="radio-btn" id="radio1" checked />
+      <input type="radio" name="radio-btn" id="radio2" />
+      <input type="radio" name="radio-btn" id="radio3" />
+      <input type="radio" name="radio-btn" id="radio4" />
+
+      <!-- 🔹 SLIDE 1 – Quiénes somos -->
+      <div class="slide first">
+        <img src="assets/slide/fondo1.jpg" alt="Fondo 1" onerror="this.style.display='none'" />
+        <div class="slide-info">
+          <h1 class="slide-title">Colección Retro Clásica</h1>
+          <p class="slide-subtitle">Donde el pasado cobra vida</p>
+          <a href="#about" class="slide-btn">Conócenos</a>
+        </div>
+        <img
+          src="assets/slide/jugadores/r10.png"
+          alt="R10"
+          class="player-img pulse-zoom"
+          onerror="this.style.display='none'"
+        />
+      </div>
+
+      <!-- 🔹 SLIDE 2 – Colecciones -->
+      <div class="slide">
+        <img src="assets/slide/fondo2.jpg" alt="Fondo 2" onerror="this.style.display='none'" />
+        <div class="slide-info">
+          <h1 class="slide-title">Historia y Estilo</h1>
+          <p class="slide-subtitle">Explora nuestras colecciones legendarias</p>
+          <a href="#colecciones" class="slide-btn">Ver Colecciones</a>
+        </div>
+        <img
+          src="assets/slide/jugadores/CB.png"
+          alt="CB"
+          class="player-img pulse-zoom"
+          onerror="this.style.display='none'"
+        />
+      </div>
+
+      <!-- 🔹 SLIDE 3 – Catálogo -->
+      <div class="slide">
+        <img src="assets/slide/fondo1.jpg" alt="Fondo 3" onerror="this.style.display='none'" />
+        <div class="slide-info">
+          <h1 class="slide-title">Pasión por el Fútbol</h1>
+          <p class="slide-subtitle">Los clásicos que marcaron una era</p>
+          <a href="#catalogo" class="slide-btn">Ver Catálogo</a>
+        </div>
+        <img
+          src="assets/slide/jugadores/CR7 .png"
+          alt="CR7"
+          class="player-img pulse-zoom"
+          onerror="this.style.display='none'"
+        />
+      </div>
+
+      <!-- 🔹 SLIDE 4 – Inicio -->
+      <div class="slide">
+        <img src="assets/slide/fondo2.jpg" alt="Fondo 4" onerror="this.style.display='none'" />
+        <div class="slide-info">
+          <h1 class="slide-title">Revive la Época Dorada</h1>
+          <p class="slide-subtitle">El legado de las leyendas continúa</p>
+          <a href="#inicio" class="slide-btn">Volver al Inicio</a>
+        </div>
+        <img
+          src="assets/slide/jugadores/Messi.png"
+          alt="Messi"
+          class="player-img pulse-zoom"
+          onerror="this.style.display='none'"
+        />
+      </div>
+
+      <!-- Navegación automática -->
+      <div class="navigation-auto">
+        <div class="auto-btn1"></div>
+        <div class="auto-btn2"></div>
+        <div class="auto-btn3"></div>
+        <div class="auto-btn4"></div>
+      </div>
+    </div>
+
+    <!-- Navegación manual -->
+    <div class="navigation-manual">
+      <label for="radio1" class="manual-btn"></label>
+      <label for="radio2" class="manual-btn"></label>
+      <label for="radio3" class="manual-btn"></label>
+      <label for="radio4" class="manual-btn"></label>
+    </div>
+
+    <!-- 🔹 Flechas (usan el script global de home.ts) -->
+    <button class="prev" onclick="moveSlide(-1)">❮</button>
+    <button class="next" onclick="moveSlide(1)">❯</button>
+  </div>
+</section>
+
+<!-- 🧍‍♂ SECCIÓN 2: QUIÉNES SOMOS (Tu código) -->
+<section id="about" class="about-section">
+  <div class="about-container">
+    <div class="circle-background">
+      <img
+        src="assets/slide/circulo/circuloplomo1.png"
+        alt="Círculo girando"
+        class="rotating-circle"
+        onerror="this.style.display='none'"
+      />
+    </div>
+    <div class="about-image">
+      <img src="assets/somos.png" alt="Equipo OldSchoolTed" onerror="this.style.display='none'" />
+    </div>
+    <div class="about-text">
+      <h2>¿Quiénes Somos?</h2>
+      <p>
+        En <strong>OldSchoolTed</strong> celebramos la esencia del estilo retro, trayendo de vuelta
+        las camisetas clásicas que marcaron historia en el fútbol, el cine y la cultura urbana.
+      </p>
+      <p>
+        Cada prenda refleja dedicación, nostalgia y calidad. Desde Perú, trabajamos para conectar
+        generaciones a través del diseño y la historia.
+        <strong>OldSchoolTed</strong>: el pasado nunca se vio tan bien.
+      </p>
+    </div>
+  </div>
+</section>
+<section id="opiniones" class="opiniones-section">
+  <h2 class="section-title">Lo que dicen las leyendas del fútbol</h2>
+
+  <div class="opiniones-container">
+    <!-- Testimonio 1 -->
+    <div class="opinion-card opinion-ronaldo">
+      <img src="assets/Comunicado/Ronaldo.jpg" alt="Ronaldo" class="opinion-img" />
+      <h3>Ronaldo Nazário</h3>
+      <p>
+        “OldSchoolTed captura la esencia del fútbol clásico. Las camisetas son increíbles, llenas de
+        historia y estilo.”
+      </p>
+    </div>
+
+    <!-- Testimonio 2 -->
+    <div class="opinion-card opinion-zidane">
+      <img src="assets/Comunicado/Zidane.jpg" alt="Zinedine Zidane" class="opinion-img" />
+      <h3>Zinedine Zidane</h3>
+      <p>
+        “Un tributo espectacular a las épocas doradas del fútbol. Calidad y nostalgia en cada
+        prenda.”
+      </p>
+    </div>
+
+    <!-- Testimonio 3 -->
+    <div class="opinion-card opinion-totti">
+      <img src="assets/Comunicado/Totti.jpg" alt="Francesco Totti" class="opinion-img" />
+      <h3>Francesco Totti</h3>
+      <p>
+        “Para los verdaderos amantes del deporte rey. OldSchoolTed revive lo mejor de nuestra
+        historia.”
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 🧢 SECCIÓN 3: COLECCIONES (Tu código) -->
+<section id="colecciones" class="manual-slider-section">
+  <h2 class="section-title">Marcas que Acompañan la Historia del Fútbol</h2>
+
+  <div class="manual-slider-container">
+    <button class="arrow left" id="prevManual">❮</button>
+
+    <div class="manual-slider" id="manualSlider">
+      <div class="manual-item">
+        <img
+          src="../../../assets/Marcas/Puma.jpg"
+          alt="Logo Puma"
+          onerror="this.style.display='none'"
+        />
+        <p>PUMA</p>
+      </div>
+
+      <div class="manual-item">
+        <img
+          src="../../../assets/Marcas/Lotto.png"
+          alt="Logo Adidas"
+          onerror="this.style.display='none'"
+        />
+        <p>Adidas</p>
+      </div>
+
+      <div class="manual-item">
+        <img
+          src="../../../assets/Marcas/Nike.jpg"
+          alt="Logo Nike"
+          onerror="this.style.display='none'"
+        />
+        <p>Nike</p>
+      </div>
+
+      <div class="manual-item">
+        <img
+          src="../../../assets/Marcas/Umbro.png"
+          alt="Logo Umbro"
+          onerror="this.style.display='none'"
+        />
+        <p>Umbro</p>
+      </div>
+
+      <div class="manual-item">
+        <img
+          src="../../../assets/Marcas/Lotto.png"
+          alt="Logo Lotto"
+          onerror="this.style.display='none'"
+        />
+        <p>Lotto</p>
+      </div>
+    </div>
+    <!-- cierre correcto del slider -->
+
+    <button class="arrow right" id="nextManual">❯</button>
+  </div>
+  <!-- cierre del container -->
+</section>
+
+<!-- 🛒 SECCIÓN 4: CATÁLOGO (Estilo Escaparate - Sin botón de compra directa) -->
+<section id="catalogo" class="catalogo-section">
+  
+  <!-- Título Mejorado y Centrado (Estilo Premium Sport) -->
+  <div class="relative text-center py-16 mb-8 overflow-hidden">
+    <!-- Texto de fondo gigante -->
+    <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[6rem] md:text-[9rem] lg:text-[12rem] font-black text-gray-100 uppercase tracking-tighter select-none pointer-events-none z-0 opacity-50">
+      STORE
+    </span>
+    
+    <!-- Título Principal -->
+    <div class="relative z-10">
+      <span class="block text-[#F7CE46] font-bold text-xs md:text-sm uppercase tracking-[0.5em] mb-2">
+        Colección 2025
+      </span>
+      <h2 class="text-4xl md:text-6xl font-black text-[#151528] uppercase tracking-tighter drop-shadow-sm">
+        Catálogo <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#151528] to-gray-500">Oficial</span>
+      </h2>
+      <div class="w-24 h-1 bg-[#E50046] mx-auto mt-6"></div>
+    </div>
+  </div>
+  
+  <div class="catalogo-container container mx-auto p-4 sm:p-8">
+    <!-- 1. Estado de Carga -->
+    @if (isLoading()) {
+      <div class="text-center p-12">
+        <p class="text-xl text-gray-700 animate-pulse">Cargando productos...</p>
+      </div>
+    }
+
+    <!-- 2. Estado de Error -->
+    @if (error() && !isLoading()) {
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 max-w-2xl mx-auto">
+        <strong>Error:</strong> {{ error() }}
+      </div>
+    }
+
+    <!-- 3. Grid de Productos -->
+    @if (!isLoading() && !error()) {
+      @if (products().length > 0) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
+          @for (prod of products(); track prod.id) {
+            <!-- Tarjeta de Producto: Solo visualización (Estilo Escaparate) -->
+            <div class="bg-white rounded-none shadow-sm hover:shadow-2xl transition duration-500 group border border-gray-100 cursor-pointer transform hover:-translate-y-1"
+                 [routerLink]="['/producto', prod.id]">
+
+              <div class="relative block overflow-hidden bg-gray-100 aspect-[4/5]">
+                <!-- Imagen principal -->
+                <img [src]="prod.imageUrl || 'https://placehold.co/400x500/4c4180/ffffff?text=OS+Tee'"
+                     [alt]="prod.nombre"
+                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 mix-blend-multiply"
+                     onerror="this.src='https://placehold.co/400x500/e2e8f0/adb5bd?text=No+Img'">
+                
+                <!-- Badge Oferta (Estilo Nike - Pequeño y Discreto) -->
+                @if (prod.nombrePromocion) {
+                  <span class="absolute top-3 left-3 bg-[#E50046] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-sm z-10">
+                    {{ prod.nombrePromocion }}
+                  </span>
+                }
+
+                <!-- Overlay Agotado (Estilo Minimal) -->
+                @if (prod.stock === 0) {
+                  <div class="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-[2px] z-20">
+                    <span class="text-black font-black uppercase border-2 border-black px-4 py-2 tracking-widest text-xs">Sold Out</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Información Minimalista -->
+              <div class="p-4 flex flex-col">
+                <!-- Categoría pequeña -->
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1 group-hover:text-[#E50046] transition-colors">{{ prod.categoriaNombre || 'Retro' }}</p>
+                
+                <!-- Nombre del Producto -->
+                <h2 class="text-sm font-bold text-gray-900 truncate mb-2 uppercase tracking-tight">
+                   {{ prod.nombre }}
+                </h2>
+                
+                <!-- Precio (Sin botón de añadir) -->
+                <div class="flex items-baseline mt-1 border-t border-gray-50 pt-2">
+                   <span class="text-lg font-black text-[#151528]">{{ prod.precio | currency:'S/ ' }}</span>
+                   @if (prod.precioOriginal && prod.precioOriginal !== prod.precio) {
+                     <span class="text-xs text-gray-400 line-through ml-3 font-medium decoration-red-500">{{ prod.precioOriginal | currency:'S/ ' }}</span>
+                   }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="text-center text-gray-500 mt-12 py-12 border-2 border-dashed border-gray-200">
+          No se encontraron productos en el catálogo.
+        </div>
+      }
+    }
+  </div>
+</section>

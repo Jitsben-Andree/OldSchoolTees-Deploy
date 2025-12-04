@@ -1,0 +1,124 @@
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  
+  <video
+    #bgVideo
+    autoplay
+    loop
+    muted
+    defaultMuted
+    playsinline
+    webkit-playsinline
+    x5-playsinline
+    preload="auto"
+    class="absolute inset-0 w-full h-full object-cover"
+    aria-hidden="true"
+  >
+    <source src="assets/video.mp4" type="video/mp4" />
+  </video>
+
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-[520px] bg-white/90 p-8 rounded-lg shadow-2xl backdrop-blur-md">
+    <h2 class="text-3xl font-bold text-center mb-6 text-gray-900">Crear Cuenta</h2>
+
+    <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
+      
+      <div class="mb-5">
+        <label for="name" class="mb-2 block text-base font-medium text-[#07074D]">Nombre Completo</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          placeholder="Tu Nombre"
+          ngModel
+          #name="ngModel"
+          required
+          minlength="3"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md"
+        />
+        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="name.errors?.['required']">El nombre es requerido.</span>
+          <span *ngIf="name.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label for="email" class="mb-2 block text-base font-medium text-[#07074D]">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="tu@email.com"
+          ngModel
+          #email="ngModel"
+          required
+          email
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md"
+        />
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="email.errors?.['required']">El email es requerido.</span>
+          <span *ngIf="email.errors?.['email']">Email inválido.</span>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label for="password" class="mb-2 block text-base font-medium text-[#07074D]">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="••••••••"
+          ngModel
+          #password="ngModel"
+          required
+          minlength="6"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md"
+        />
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="password.errors?.['required']">La contraseña es requerida.</span>
+          <span *ngIf="password.errors?.['minlength']">Debe tener al menos 6 caracteres.</span>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label for="confirmPassword" class="mb-2 block text-base font-medium text-[#07074D]">Confirmar Contraseña</label>
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          placeholder="••••••••"
+          ngModel
+          #confirmPassword="ngModel"
+          required
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md"
+        />
+        <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="confirmPassword.errors?.['required']">Debe confirmar la contraseña.</span>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4">
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <div>
+        <button
+          [disabled]="registerForm.invalid || isSubmitting"
+          class="hover:shadow-lg w-full rounded-md bg-indigo-600 py-3 px-8 text-center text-base font-semibold text-white outline-none disabled:bg-gray-400 transition duration-300"
+        >
+          <span *ngIf="isSubmitting; else notSubmitting">Creando cuenta...</span>
+          <ng-template #notSubmitting>Crear Cuenta</ng-template>
+        </button>
+      </div>
+
+      <div class="mt-4 text-center space-y-2">
+        <div class="text-sm text-gray-700">
+          ¿Ya tienes una cuenta?
+          <a routerLink="/login" class="text-indigo-600 hover:text-indigo-500 underline font-medium">
+            Iniciar Sesión
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

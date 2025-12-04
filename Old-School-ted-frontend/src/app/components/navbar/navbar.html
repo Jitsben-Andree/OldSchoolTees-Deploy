@@ -1,0 +1,168 @@
+<!-- Fondo estilo "Barça Store" (Dark Navy) -->
+<nav class="sticky top-0 z-50 w-full bg-[#151528] border-b border-[#2a2a45] shadow-2xl transition-all duration-300 font-sans">
+  
+  <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+
+      <!-- SECCIÓN IZQUIERDA: LOGO BRANDING -->
+      <div class="flex-shrink-0 flex items-center gap-6">
+  <a routerLink="/" (click)="closeMobileMenu()" class="group flex items-center gap-3 cursor-pointer">
+
+    <img src="../../../assets/Logo.png"
+         alt="OST"
+         class="h-10 w-10 object-contain filter drop-shadow-lg rounded-md">
+
+    <div class="flex flex-col justify-center leading-none">
+      <span class="text-xl font-black text-white tracking-tighter uppercase group-hover:text-gray-300 transition-colors">
+        OldSchoolTed
+      </span>
+      <span class="text-[0.65rem] text-gray-400 font-normal tracking-wide uppercase mt-0.5">
+        Official Store
+      </span>
+    </div>
+
+  </a>
+</div>
+
+
+      <!-- SECCIÓN CENTRAL: MENÚ DE NAVEGACIÓN -->
+      <div class="hidden lg:flex items-center space-x-10">
+        
+        <!-- Novedades -->
+        <a routerLink="/" 
+           class="text-xs font-bold text-[#F7CE46] hover:text-white uppercase tracking-widest transition-colors duration-300 scale-100 hover:scale-105 transform">
+           Novedades
+        </a>
+
+        <!-- Catálogo-->
+        <a routerLink="/catalogo" 
+           routerLinkActive="text-white border-b-2 border-white" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class="text-xs font-bold text-gray-300 hover:text-white uppercase tracking-widest transition-all duration-300 py-1 border-b-2 border-transparent">
+           Catálogo
+        </a>
+
+        @if (authService.isLoggedIn()) {
+          <a routerLink="/mis-pedidos" 
+             routerLinkActive="text-white border-b-2 border-white"
+             class="text-xs font-bold text-gray-300 hover:text-white uppercase tracking-widest transition-all duration-300 py-1 border-b-2 border-transparent">
+             Mis Pedidos
+          </a>
+
+          @if (authService.isAdmin()) {
+            <a routerLink="/admin" 
+               routerLinkActive="text-yellow-500 border-yellow-500"
+               class="text-xs font-bold text-white hover:text-yellow-500 uppercase tracking-widest transition-all duration-300 py-1 border-b-2 border-transparent flex items-center gap-2">
+               <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span> Admin
+            </a>
+          }
+        }
+      </div>
+
+      <!-- SECCIÓN DERECHA: ICONOS -->
+      <div class="flex items-center gap-6">
+        
+        <!-- Usuario / Login -->
+        @if (authService.isLoggedIn()) {
+           <!-- Logueado: Icono User con Dropdown Mejorado -->
+           <div class="relative group h-full flex items-center">
+              <button class="text-white hover:text-gray-300 transition-colors flex items-center gap-2 py-2 focus:outline-none">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                 <!-- Nombre visible en desktop grande para mejor UX -->
+                 <span class="hidden xl:block text-xs font-bold uppercase tracking-wide">{{ authService.currentUser()?.nombre }}</span>
+              </button>
+              
+              <!-- Tooltip Dropdown -->
+              <div class="absolute right-0 top-full mt-0 w-48 bg-white rounded-sm shadow-2xl py-2 hidden group-hover:block animate-fade-in z-50 border-t-4 border-[#F7CE46]">
+                 <div class="px-4 py-3 border-b border-gray-100">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider">Hola,</p>
+                    <p class="text-sm font-bold text-gray-800 truncate">{{ authService.currentUser()?.nombre }}</p>
+                 </div>
+                 <button (click)="logout()" class="w-full text-left px-4 py-3 text-xs text-red-600 hover:bg-gray-50 font-bold uppercase tracking-wide transition-colors flex items-center gap-2">
+                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                   Cerrar Sesión
+                 </button>
+              </div>
+           </div>
+        } @else {
+           <!-- No logueado -->
+           <a routerLink="/login" class="text-xs font-bold text-white hover:text-[#F7CE46] transition-colors uppercase tracking-widest flex items-center gap-1">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"></path></svg>
+              Login
+           </a>
+        }
+
+        <!-- Carrito (Bolsa) -->
+        <a routerLink="/cart" class="relative text-white hover:text-gray-300 transition-colors group">
+           <div class="p-2 rounded-full group-hover:bg-white/10 transition-colors">
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
+           </div>
+           
+           <!-- Badge Rojo Redondo -->
+           @if (totalCartItems() > 0) {
+             <span class="absolute top-0 right-0 h-4 w-4 bg-[#E50046] text-white text-[9px] font-bold flex items-center justify-center rounded-full shadow-sm border-2 border-[#151528]">
+               {{ totalCartItems() }}
+             </span>
+           }
+        </a>
+
+        <!-- Botón Hamburguesa (Móvil) -->
+        <button (click)="toggleMobileMenu()" class="lg:hidden text-white hover:text-gray-300 p-1">
+          @if (!isMobileMenuOpen()) {
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg>
+          } @else {
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+          }
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MENÚ MÓVIL -->
+  @if (isMobileMenuOpen()) {
+    <div class="lg:hidden bg-[#151528] border-t border-gray-800 animate-fade-in-down absolute w-full shadow-2xl z-40">
+      <div class="px-0 py-2">
+        
+        <a routerLink="/" (click)="closeMobileMenu()" 
+           class="block px-6 py-4 text-sm font-bold text-[#F7CE46] border-b border-gray-800 hover:bg-gray-800 transition-colors uppercase tracking-widest">
+           Novedades
+        </a>
+        
+        <a routerLink="/" (click)="closeMobileMenu()" 
+           class="block px-6 py-4 text-sm font-bold text-white border-b border-gray-800 hover:bg-gray-800 transition-colors uppercase tracking-widest">
+           Catálogo
+        </a>
+
+        @if (authService.isLoggedIn()) {
+          <a routerLink="/mis-pedidos" (click)="closeMobileMenu()" 
+             class="block px-6 py-4 text-sm font-bold text-white border-b border-gray-800 hover:bg-gray-800 transition-colors uppercase tracking-widest">
+             Mis Pedidos
+          </a>
+          
+          @if (authService.isAdmin()) {
+            <a routerLink="/admin" (click)="closeMobileMenu()" 
+               class="block px-6 py-4 text-sm font-bold text-yellow-500 border-b border-gray-800 hover:bg-gray-800 transition-colors uppercase tracking-widest">
+               Admin Panel
+            </a>
+          }
+
+          <div class="px-6 py-4 bg-gray-900/50">
+             <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Conectado como</p>
+             <p class="text-sm text-white font-bold">{{ authService.currentUser()?.nombre }}</p>
+             <button (click)="logout()" class="mt-4 w-full py-3 text-xs text-white bg-red-600 hover:bg-red-700 font-bold uppercase tracking-wider rounded">
+               Cerrar Sesión
+             </button>
+          </div>
+
+        } @else {
+          <div class="p-4">
+            <a routerLink="/login" (click)="closeMobileMenu()" class="block w-full text-center bg-white text-black font-bold py-3 rounded shadow-lg hover:bg-gray-200 transition-colors uppercase tracking-widest text-xs">
+               Iniciar Sesión
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</nav>

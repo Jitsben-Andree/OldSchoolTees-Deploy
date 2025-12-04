@@ -1,0 +1,588 @@
+/* ---------------------------------- */
+/* SECCIÓN 1: SLIDER PRINCIPAL (CSS) */
+/* ---------------------------------- */
+.page-background {
+  width: 100%;
+  background-color: #f0f2f5; /* Un fondo suave */
+  padding: 0; /* el slider toca los bordes */
+}
+
+.slider {
+  width: 100%;
+  height: 500px;
+  max-height: 70vh;
+  overflow: hidden;
+  position: relative;
+  background-color: #111827; /* Fondo oscuro detrás del slider */
+}
+
+.slides {
+  width: 500%;
+  height: 100%;
+  display: flex;
+}
+
+.slides input {
+  display: none;
+}
+
+.slide {
+  width: 20%;
+  height: 100%;
+  transition: 2s;
+  position: relative;
+}
+
+/* 🔥 La PRIMERA imagen de cada slide será el FONDO (full ancho) */
+.slide > img:first-child {
+  position: absolute;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* llena todo el slide */
+  filter: brightness(0.85);
+  z-index: 0;
+}
+
+/* El jugador y el texto se dibujan por encima */
+.slide-info,
+.player-img {
+  position: relative;
+  z-index: 1;
+}
+
+/* Contenido de texto sobre el slide */
+.slide-info {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  color: white;
+  z-index: 10;
+  width: 40%;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.slide-title {
+  font-size: 2.75rem; /* 44px */
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.slide-subtitle {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 300;
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+.slide-btn {
+  display: inline-block;
+  background-color: #4f46e5; /* Indigo-600 */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+              0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.slide-btn:hover {
+  background-color: #4338ca; /* Indigo-700 */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+              0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Imagen del jugador */
+.player-img {
+  position: absolute;
+  bottom: 0;
+  right: 5%;
+  height: 90%;
+  width: auto;
+  object-fit: contain;
+  z-index: 5;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+}
+
+/* Animación sutil de zoom */
+@keyframes pulseZoom {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
+
+.pulse-zoom {
+  animation: pulseZoom 6s ease-in-out infinite;
+}
+
+/* Lógica de CSS para mover slides */
+#radio1:checked ~ .first { margin-left: 0; }
+#radio2:checked ~ .first { margin-left: -20%; }
+#radio3:checked ~ .first { margin-left: -40%; }
+#radio4:checked ~ .first { margin-left: -60%; }
+
+/* Navegación manual (botones radio) */
+.navigation-manual {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 10;
+}
+
+.manual-btn {
+  border: 2px solid #fff;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.5s;
+  margin: 0 5px;
+}
+
+.manual-btn:hover {
+  background: #4f46e5;
+}
+
+#radio1:checked ~ .navigation-manual .manual-btn:nth-child(1),
+#radio2:checked ~ .navigation-manual .manual-btn:nth-child(2),
+#radio3:checked ~ .navigation-manual .manual-btn:nth-child(3),
+#radio4:checked ~ .navigation-manual .manual-btn:nth-child(4) {
+  background: #4f46e5;
+}
+
+/* Navegación automática */
+.navigation-auto {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 9;
+}
+
+.navigation-auto div {
+  border: 2px solid #4f46e5;
+  padding: 5px;
+  border-radius: 50%;
+  transition: 0.5s;
+  margin: 0 5px;
+}
+
+#radio1:checked ~ .navigation-auto .auto-btn1,
+#radio2:checked ~ .navigation-auto .auto-btn2,
+#radio3:checked ~ .navigation-auto .auto-btn3,
+#radio4:checked ~ .navigation-auto .auto-btn4 {
+  background: #4f46e5;
+}
+
+/* Flechas de navegación manual */
+.slider .prev,
+.slider .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.slider .prev:hover,
+.slider .next:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.slider .prev { left: 1rem; }
+.slider .next { right: 1rem; }
+
+/* ---------------------------------- */
+/* SECCIÓN 2: QUIÉNES SOMOS (CSS) */
+/* ---------------------------------- */
+
+/* 🌫 FONDO PARA TODAS LAS SECCIONES DESPUÉS DEL SLIDER */
+/* 🌫 FONDO PARA TODAS LAS SECCIONES DESPUÉS DEL SLIDER */
+.about-section,
+.manual-slider-section,
+.catalogo-section {
+  /* Gris plomo base (por si la imagen no carga) */
+  background-color: #d1d5db;
+
+  
+}
+
+
+/* Quiénes somos */
+.about-section {
+  width: 100%;
+  padding: 4rem 2rem;
+  background-color: transparent !important; /* deja ver el fondo */
+}
+
+.about-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  margin: auto;
+  gap: 3rem;
+  position: relative; /* Para el círculo */
+}
+
+.about-image {
+  flex: 1 1 300px;
+  max-width: 500px;
+  position: relative;
+  z-index: 5;
+}
+
+.about-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2),
+              0 8px 10px -6px rgb(0 0 0 / 0.2);
+}
+
+.about-text {
+  flex: 1 1 300px;
+  max-width: 600px;
+  color: #1f2937; /* Gray-800 */
+}
+
+.about-text h2 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid #4f46e5;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.about-text p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* Círculo decorativo */
+.circle-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 1000px;
+  height: 1000px;
+  z-index: 0;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 25px rgba(0,0,0,0.35));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 330px;
+  height: 330px;
+  background: radial-gradient(circle, #00000033, #00000011);
+  border-radius: 50%;
+}
+
+.rotating-circle {
+  width: 100%;
+  animation: spin 12s linear infinite;
+  filter: brightness(1.15) contrast(1.1);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ---------------------------------- */
+/* SECCIÓN 3: COLECCIONES (CSS) */
+/* ---------------------------------- */
+
+.manual-slider-section {
+  width: 100%;
+  padding: 4rem 0;
+  background-color: transparent !important;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 2.5rem;
+}
+
+.manual-slider-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+}
+
+.manual-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.manual-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tarjeta completa del logo (imagen + nombre) */
+.manual-item {
+  flex: 0 0 300px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: rgb(5, 27, 97);
+  box-shadow: 0 8px 20px rgba(2, 5, 216, 0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Efecto hover mejorado */
+.manual-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(52, 12, 197, 0.25);
+}
+
+/* Logos de marcas */
+.manual-item img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background-color: white;
+  padding: 1rem;
+  border-bottom: 1px solid #4338ca;
+}
+
+.manual-item p {
+  text-align: center;
+  font-weight: 600;
+  color: #676e77;
+  padding: 1rem;
+  background-color: rgb(12, 23, 53);
+}
+
+/* Flechas para el slider manual */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  color: #374151;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.arrow:hover {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.arrow.left { left: -1.5rem; }
+.arrow.right { right: -1.5rem; }
+
+/* ---------------------------------- */
+/* SECCIÓN 4: CATÁLOGO (CSS) */
+/* ---------------------------------- */
+
+.catalogo-section {
+  width: 100%;
+  padding: 4rem 0;
+  background-color: transparent !important;
+}
+
+/* .catalogo-container usa Tailwind (container mx-auto etc) */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.manual-item {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* tarjeta activa del carrusel de marcas */
+.manual-item.active-brand {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.6);
+}
+
+/* 🔹 BOT DE OSO - GIF FLOTANTE ABAJO A LA DERECHA */
+.chatbot-gif {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+}
+
+.chatbot-gif img {  
+  width: 120px;
+  height: auto;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chatbot-gif img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* En celulares lo hacemos un poco más pequeño */
+@media (max-width: 640px) {
+  .chatbot-gif img {
+    width: 90px;
+  }
+}
+
+#bp-web-widget {
+  bottom: 20px !important;
+  right: 20px !important;
+}
+/* ---------------------------------- */
+/* ⭐ SECCIÓN OPINIONES (COMPLETA) */
+/* ---------------------------------- */
+
+.opiniones-section {
+  padding: 4rem 2rem;
+  background: #646b85;
+  text-align: center;
+}
+
+.opiniones-section .section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #28371f;
+}
+
+.opiniones-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  justify-content: center;
+  align-items: start;
+}
+
+.opinion-card {
+  position: relative;   /* NECESARIO para el GIF */
+  background: rgb(255, 255, 255);
+  padding: 1.8rem;
+  border-radius: 1rem;
+  overflow: hidden;     /* Para que el GIF no se salga */
+  box-shadow: 0px 10px 25px rgba(10, 182, 39, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.opinion-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0px 18px 35px rgba(231, 241, 245, 0.781);
+}
+
+/* 👉 Todo el contenido va encima del GIF */
+.opinion-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 👉 Capa del GIF de fondo */
+.opinion-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.45;       /* Ajusta si quieres más o menos visible */
+  filter: blur(1px);
+  z-index: 1;
+}
+
+/* 👉 GIF específico por jugador */
+.opinion-card.opinion-ronaldo::before {
+  background-image: url('/assets/Marcas/Ronaldo.gif');
+}
+
+.opinion-card.opinion-zidane::before {
+  background-image: url('/assets/Marcas/Zidane.gif');
+}
+
+.opinion-card.opinion-totti::before {
+  background-image: url('/assets/Marcas/Totti.gif');
+}
+
+.opinion-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 4px solid #091d75;
+}
+
+.opinion-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #272011;
+}
+
+.opinion-card p {
+  font-size: 0.95rem;
+  margin-top: 0.8rem;
+  color: #033658;
+}
+
+
+
+::-webkit-scrollbar {
+  width: 10px;           
+}
+
+::-webkit-scrollbar-track {
+  background: #2f3651;     
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #131399, #32325f); 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0d0db4, #3a3a4e);
+}

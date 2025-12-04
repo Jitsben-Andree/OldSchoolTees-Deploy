@@ -1,0 +1,297 @@
+<div class="min-h-screen bg-white text-gray-900 font-sans pb-20 pt-8">
+  
+  <!-- Toast Notification -->
+  @if (toastMessage(); as msg) {
+    <div class="fixed top-6 right-6 z-50 animate-bounce-in">
+      <div [ngClass]="{
+        'bg-black text-white': msg.type === 'success',
+        'bg-red-600 text-white': msg.type === 'error'
+      }" class="px-6 py-4 rounded-md shadow-2xl flex items-center space-x-3 max-w-sm">
+        <span class="text-xl">{{ msg.type === 'success' ? '✓' : '✕' }}</span>
+        <p class="font-medium text-sm">{{ msg.text }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Guía de Tallas -->
+  @if (showSizeChart()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" (click)="toggleSizeChart()">
+      <div class="bg-white p-8 max-w-2xl w-full relative shadow-2xl animate-fade-in" (click)="$event.stopPropagation()">
+        <button (click)="toggleSizeChart()" class="absolute top-4 right-4 text-gray-500 hover:text-black">✕</button>
+        <h3 class="text-xl font-bold uppercase tracking-wider mb-6 border-b pb-2">Guía de Tallas</h3>
+        <table class="w-full text-sm text-left text-gray-600">
+          <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+            <tr><th class="px-4 py-2">Talla</th><th class="px-4 py-2">Pecho</th><th class="px-4 py-2">Largo</th></tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="px-4 py-3 font-bold">S</td><td>48-50 cm</td><td>69-71 cm</td></tr>
+            <tr class="border-b"><td class="px-4 py-3 font-bold">M</td><td>50-52 cm</td><td>71-73 cm</td></tr>
+            <tr class="border-b"><td class="px-4 py-3 font-bold">L</td><td>52-54 cm</td><td>73-75 cm</td></tr>
+            <tr><td class="px-4 py-3 font-bold">XL</td><td>54-58 cm</td><td>76-78 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <div class="container mx-auto px-4 max-w-7xl">
+    
+    <!-- Breadcrumbs simple -->
+    <nav class="flex mb-6 text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-black transition-colors cursor-pointer" (click)="goBack()">
+      ← Volver
+    </nav>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex justify-center py-20"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div></div>
+    }
+
+    @if (product(); as prod) {
+      <div class="flex flex-col lg:flex-row gap-8 xl:gap-16">
+        
+        <!-- COLUMNA IZQUIERDA: GALERÍA -->
+        <div class="lg:w-[60%] flex flex-col-reverse lg:flex-row gap-4">
+          
+          <!-- Thumbnails (Lista vertical en Desktop) -->
+          <div class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible lg:w-24 shrink-0 hide-scrollbar">
+             <!-- Thumbnail 0: Portada -->
+             <button (click)="setActiveImage(0)" 
+                     [class.border-black]="activeImageIndex() === 0"
+                     class="w-20 h-24 lg:w-full lg:h-28 border border-transparent hover:border-gray-400 transition-all overflow-hidden bg-gray-100 rounded-sm">
+               <img [src]="prod.imageUrl || 'assets/placeholder.png'" class="w-full h-full object-cover">
+             </button>
+
+             <!-- Thumbnails: Galería Adicional -->
+             @if (prod.galeriaImagenes && prod.galeriaImagenes.length > 0) {
+               @for (img of prod.galeriaImagenes; track img.id; let i = $index) {
+                 <button (click)="setActiveImage(i + 1)" 
+                         [class.border-black]="activeImageIndex() === (i + 1)"
+                         class="w-20 h-24 lg:w-full lg:h-28 border border-transparent hover:border-gray-400 transition-all overflow-hidden bg-gray-100 rounded-sm">
+                   <img [src]="img.url" class="w-full h-full object-cover">
+                 </button>
+               }
+             }
+          </div>
+
+          <!-- Imagen Principal Grande -->
+          <div class="flex-1 bg-gray-100 relative group overflow-hidden aspect-[4/5] lg:aspect-auto rounded-sm">
+             
+             <!-- Lógica para mostrar la imagen activa -->
+             @if (activeImageIndex() === 0) {
+                <img [src]="prod.imageUrl || 'assets/placeholder.png'" 
+                     [alt]="prod.nombre"
+                     class="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-105 cursor-zoom-in"
+                     onerror="this.src='https://placehold.co/600x800/f3f4f6/a5b4fc?text=No+Image'">
+             } @else {
+                <!-- Restar 1 al índice porque la galería empieza en 0 pero nuestro índice global en 1 -->
+                @if (prod.galeriaImagenes && prod.galeriaImagenes[activeImageIndex() - 1]) {
+                   <img [src]="prod.galeriaImagenes[activeImageIndex() - 1].url" 
+                        [alt]="prod.nombre"
+                        class="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                }
+             }
+             
+             <!-- Badge "Pocas Unidades" -->
+             @if(prod.stock > 0 && prod.stock < 5) {
+                <span class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-sm">
+                  Últimas Unidades
+                </span>
+             }
+
+             <!-- VISTA PREVIA PERSONALIZACIÓN (Solo visible si estamos en la imagen 0/Portada) -->
+             @if (activeImageIndex() === 0 && personalizationMode() !== null && (selectedPlayer || customName || customNumber)) {
+               <div class="absolute top-[28%] left-0 w-full text-center pointer-events-none z-20 px-4"
+                    style="font-family: 'Impact', 'Arial Narrow', sans-serif;">
+                 
+                 <!-- Nombre -->
+                 <div [style.color]="prod.colorDorsal || '#000000'" 
+                      class="uppercase tracking-tighter text-5xl lg:text-7xl mb-0 transform scale-y-125 drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)] break-words leading-none">
+                   @if (personalizationMode() === 'player') {
+                     {{ selectedPlayer.split('-')[1]?.trim() }}
+                   } @else {
+                     {{ customName }}
+                   }
+                 </div>
+                 
+                 <!-- Número -->
+                 <div [style.color]="prod.colorDorsal || '#000000'" 
+                      class="text-[12rem] leading-none lg:text-[15rem] mt-4 lg:mt-6 tracking-tighter transform scale-y-110 drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
+                   @if (personalizationMode() === 'player') {
+                     {{ selectedPlayer.split('-')[0]?.trim() }}
+                   } @else {
+                     {{ customNumber }}
+                   }
+                 </div>
+               </div>
+               
+               <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-gray-200 px-3 py-1 rounded-full text-[10px] font-bold text-gray-500 uppercase tracking-widest pointer-events-none shadow-sm z-30">
+                 Vista Previa
+               </div>
+             }
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: DETALLES -->
+        <div class="lg:w-[40%] flex flex-col pt-2">
+          
+          <!-- Título y Precio -->
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight mb-1 font-sans">
+                {{ prod.nombre }}
+              </h1>
+              <p class="text-sm text-gray-500">{{ prod.categoriaNombre }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xl font-medium text-gray-900">{{ prod.precio | currency:'S/ ' }}</p>
+            </div>
+          </div>
+
+          <!-- Talla -->
+          <div class="mt-8 mb-8">
+            <div class="flex justify-between items-center mb-3">
+              <span class="font-bold text-sm uppercase tracking-wide">Talla</span>
+              <button (click)="toggleSizeChart()" class="text-xs text-gray-500 underline hover:text-black flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                Guía de tallas
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-3">
+              @for(size of ['S', 'M', 'L', 'XL']; track size) {
+                <button 
+                  [class]="size === prod.talla ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 hover:border-gray-900 text-gray-900'"
+                  class="h-12 border rounded-md text-sm font-medium transition-all flex items-center justify-center cursor-default">
+                  {{ size }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- PERSONALIZACIÓN -->
+          <div class="border-t border-gray-200 py-6">
+            <div class="flex justify-between items-center mb-4">
+              <span class="font-bold text-xs uppercase tracking-wide text-gray-800">PERSONALIZA ESTE ARTÍCULO</span>
+              <span class="text-sm text-gray-500">+S/ 97.00</span>
+            </div>
+
+            <div class="flex bg-gray-100 p-1 rounded-lg mb-4">
+              <button (click)="setPersonalizationMode('player')"
+                      [class]="personalizationMode() === 'player' ? 'bg-white shadow-sm text-blue-700 font-bold' : 'text-gray-500 hover:text-gray-800'"
+                      class="flex-1 py-2 text-sm rounded-md transition-all text-center">
+                Elige jugador/a
+              </button>
+              <button (click)="setPersonalizationMode('custom')"
+                      [class]="personalizationMode() === 'custom' ? 'bg-white shadow-sm text-blue-700 font-bold' : 'text-gray-500 hover:text-gray-800'"
+                      class="flex-1 py-2 text-sm rounded-md transition-all text-center">
+                Añade tu nombre
+              </button>
+            </div>
+
+            @if (personalizationMode() === 'player') {
+              <div class="animate-fade-in-down">
+                <!-- LÓGICA ACTUALIZADA: Muestra leyendas reales del backend -->
+                @if (prod.leyendas && prod.leyendas.length > 0) {
+                  <select [(ngModel)]="selectedPlayer" class="w-full border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                    <option value="" disabled selected>Selecciona una leyenda</option>
+                    @for(leyenda of prod.leyendas; track leyenda.id) {
+                      <option [value]="leyenda.numero + ' - ' + leyenda.nombre">
+                        {{ leyenda.numero }} - {{ leyenda.nombre }}
+                      </option>
+                    }
+                  </select>
+                } @else {
+                  <p class="text-xs text-gray-500 p-2 bg-gray-50 rounded text-center border border-dashed">No hay jugadores configurados para esta camiseta.</p>
+                }
+              </div>
+            }
+
+            @if (personalizationMode() === 'custom') {
+              <div class="flex gap-3 animate-fade-in-down">
+                <input type="text" [(ngModel)]="customName" placeholder="TU NOMBRE" class="flex-[2] border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none uppercase" maxlength="12">
+                <input type="number" [(ngModel)]="customNumber" placeholder="10" class="flex-1 border border-gray-300 rounded-md py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" max="99">
+              </div>
+              <p class="text-xs text-gray-400 mt-2">
+                * Estampado oficial en color <span class="font-bold" [style.color]="prod.colorDorsal">{{ prod.colorDorsal }}</span>
+              </p>
+            }
+          </div>
+
+          <!-- PARCHES -->
+          <div class="border-t border-gray-200 py-6">
+             <div class="flex justify-between items-center mb-4">
+              <span class="font-bold text-xs uppercase tracking-wide text-gray-800">AÑADE UN PARCHE</span>
+              <span class="text-sm text-gray-500">+S/ 73.00</span>
+            </div>
+            
+            <div class="flex flex-wrap gap-3">
+              <button (click)="togglePatch('ucl')" 
+                      [class]="selectedPatch() === 'ucl' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-500'"
+                      class="px-4 py-2 border rounded-full text-sm font-bold flex items-center gap-2 transition-all">
+                 <span class="text-lg">⚽</span> UCL
+              </button>
+              <button (click)="togglePatch('laliga')"
+                      [class]="selectedPatch() === 'laliga' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-500'"
+                      class="px-4 py-2 border rounded-full text-sm font-bold flex items-center gap-2 transition-all">
+                 <span class="text-lg">🇪🇸</span> LaLiga
+              </button>
+            </div>
+          </div>
+
+          <!-- SUBTOTAL Y BOTÓN -->
+          <div class="mt-4 mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+            <div class="flex justify-between items-end mb-4">
+               <span class="text-lg font-bold text-gray-900">Total Estimado</span>
+               <span class="text-2xl font-extrabold text-gray-900">{{ totalPrice() | currency: 'S/ ' }}</span>
+            </div>
+
+            <button (click)="onAddToCart()"
+                    [disabled]="prod.stock <= 0"
+                    class="w-full bg-[#FDC52C] hover:bg-[#eab308] text-black font-extrabold text-sm uppercase tracking-wider py-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+              {{ prod.stock > 0 ? 'Añadir a la Cesta' : 'Agotado' }}
+            </button>
+          </div>
+
+          <!-- ACORDEONES -->
+          <div class="border-t border-gray-200">
+            
+            <!-- Descripción -->
+            <div class="border-b border-gray-200">
+              <button (click)="toggleAccordion('description')" class="w-full py-4 flex justify-between items-center text-left hover:bg-gray-50 transition-colors group">
+                <span class="font-bold text-xs uppercase tracking-wide text-gray-800 group-hover:text-black">Descripción del producto</span>
+                <svg [class.rotate-180]="activeAccordion() === 'description'" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+              <div [class.max-h-96]="activeAccordion() === 'description'" [class.max-h-0]="activeAccordion() !== 'description'" class="overflow-hidden transition-all duration-500 ease-in-out">
+                <div class="pb-6 text-sm text-gray-600 leading-relaxed">
+                  <p>{{ prod.descripcion || 'Diseño retro auténtico con materiales premium.' }}</p>
+                  <ul class="list-disc pl-5 mt-2 space-y-1">
+                     <li>100% Poliéster de alta calidad.</li>
+                     <li>Escudo bordado.</li>
+                     <li>Recomendamos lavar a mano.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+             <!-- Envíos -->
+            <div class="border-b border-gray-200">
+              <button (click)="toggleAccordion('shipping')" class="w-full py-4 flex justify-between items-center text-left hover:bg-gray-50 transition-colors group">
+                <span class="font-bold text-xs uppercase tracking-wide text-gray-800 group-hover:text-black">Envíos y Devoluciones</span>
+                <svg [class.rotate-180]="activeAccordion() === 'shipping'" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+              <div [class.max-h-40]="activeAccordion() === 'shipping'" [class.max-h-0]="activeAccordion() !== 'shipping'" class="overflow-hidden transition-all duration-500 ease-in-out">
+                <div class="pb-6 text-sm text-gray-600 leading-relaxed">
+                  <p>Envío estándar gratuito en pedidos superiores a S/ 200.</p>
+                  <p class="mt-2">Devoluciones gratuitas dentro de los 30 días.</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+        </div> 
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,226 @@
+<div class="p-6 max-w-7xl mx-auto">
+  
+  <!-- ENCABEZADO -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Monitor del Sistema</h1>
+      <p class="text-sm text-gray-500 mt-1">Métricas en tiempo real de la infraestructura</p>
+    </div>
+    <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+      </span>
+      <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Live</span>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+    <p class="text-gray-500 font-medium">Sincronizando con el servidor...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg shadow-sm" role="alert">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-red-700 font-bold">Error de Conexión</p>
+        <p class="text-sm text-red-600">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !error">
+    
+    <!-- GRID DE TARJETAS (MÉTRICAS) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- ... (El contenido de las tarjetas de Estado, Uptime y RAM se mantiene igual) ... -->
+      <!-- TARJETA 1: ESTADO -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Servicios</h3>
+          <div class="h-2 w-2 rounded-full bg-gray-300"></div>
+        </div>
+        <div class="p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-indigo-50 rounded-lg">
+                <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+              </div>
+              <span class="font-medium text-gray-700 text-sm">Spring Boot</span>
+            </div>
+            <span class="px-2 py-1 rounded text-xs font-bold" [ngClass]="status?.app === 'UP' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+              {{ status?.app }}
+            </span>
+          </div>
+          <div class="w-full h-px bg-gray-100"></div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-blue-50 rounded-lg">
+                <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+              </div>
+              <span class="font-medium text-gray-700 text-sm">PostgreSQL</span>
+            </div>
+            <span class="px-2 py-1 rounded text-xs font-bold" [ngClass]="status?.database === 'UP' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+              {{ status?.database }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TARJETA 2: UPTIME -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" *ngIf="metrics">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Actividad</h3>
+        </div>
+        <div class="p-6 flex flex-col justify-center h-48">
+          <span class="text-xs text-gray-400 font-bold uppercase mb-2">Tiempo en línea</span>
+          <div class="text-2xl font-mono text-gray-800 font-bold mb-4">
+            {{ metrics.uptime_human }}
+          </div>
+          <div class="inline-flex items-center px-3 py-1 bg-gray-100 rounded-full w-max">
+            <span class="text-xs font-medium text-gray-600">{{ metrics.processors_available }} Cores disponibles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TARJETA 3: RAM -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" *ngIf="metrics">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Memoria</h3>
+        </div>
+        <div class="p-6 flex flex-col justify-center h-48">
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-4xl font-bold text-gray-800">{{ memoryUsagePercent }}<span class="text-xl text-gray-400">%</span></span>
+            <span class="text-xs text-gray-500 font-medium mb-1">{{ metrics.memory_used_mb }} / {{ metrics.memory_total_mb }} MB</span>
+          </div>
+          
+          <div class="w-full bg-gray-100 rounded-full h-3 mb-4 overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700 ease-out"
+                 [style.width.%]="memoryUsagePercent" 
+                 [ngClass]="{
+                   'bg-green-500': memoryUsagePercent < 70, 
+                   'bg-yellow-500': memoryUsagePercent >= 70 && memoryUsagePercent < 90, 
+                   'bg-red-500': memoryUsagePercent >= 90
+                 }">
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 font-medium">Memoria JVM Heap en uso</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- === NUEVO PANEL DE ACCIONES DE MANTENIMIENTO === -->
+    <div class="mb-8">
+      <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Acciones Rápidas</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Botón Backup -->
+        <button (click)="onBackup()" [disabled]="isActionLoading" 
+                class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group disabled:opacity-50 disabled:cursor-not-allowed">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+            </div>
+            <div class="text-left">
+              <p class="font-bold text-gray-700 text-sm">Backup DB</p>
+              <p class="text-xs text-gray-500">Respaldar Datos</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- Botón Limpieza -->
+        <button (click)="onLimpieza()" [disabled]="isActionLoading" 
+                class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group disabled:opacity-50 disabled:cursor-not-allowed">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors">
+              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </div>
+            <div class="text-left">
+              <p class="font-bold text-gray-700 text-sm">Limpieza</p>
+              <p class="text-xs text-gray-500">Borrar Tokens</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- Botón Stock -->
+        <button (click)="onCancelarPedidos()" [disabled]="isActionLoading" 
+                class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-red-300 transition-all group disabled:opacity-50 disabled:cursor-not-allowed">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-red-50 rounded-lg group-hover:bg-red-100 transition-colors">
+              <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-left">
+              <p class="font-bold text-gray-700 text-sm">Stock</p>
+              <p class="text-xs text-gray-500">Liberar Pendientes</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- Botón Reporte -->
+        <button (click)="onReporteVentas()" [disabled]="isActionLoading" 
+                class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-green-300 transition-all group disabled:opacity-50 disabled:cursor-not-allowed">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            </div>
+            <div class="text-left">
+              <p class="font-bold text-gray-700 text-sm">Ventas</p>
+              <p class="text-xs text-gray-500">Generar Reporte</p>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- TERMINAL DE LOGS -->
+    <div class="bg-[#1e1e2e] rounded-xl shadow-lg border border-gray-700 overflow-hidden">
+      <!-- Barra de herramientas terminal -->
+      <div class="bg-[#2a2a3c] px-4 py-3 flex justify-between items-center border-b border-gray-700">
+        <div class="flex items-center gap-3">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <span class="text-xs font-mono text-gray-300 font-bold uppercase tracking-wider">Console Output</span>
+        </div>
+        
+        <button (click)="downloadLogs()" class="flex items-center gap-2 px-3 py-1 bg-[#3a3a4e] hover:bg-[#4a4a5e] text-gray-300 text-xs rounded transition-colors border border-gray-600">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Descargar .log
+        </button>
+      </div>
+
+      <!-- Contenido Logs -->
+      <div class="p-4 font-mono text-xs overflow-y-auto max-h-96 custom-scrollbar bg-[#1e1e2e] text-gray-300">
+        <div *ngIf="logs.length === 0" class="text-gray-500 italic p-2">
+          Esperando logs del servidor...
+        </div>
+        
+        <div *ngFor="let line of logs" class="mb-1.5 break-words border-b border-gray-800 pb-1 last:border-0 hover:bg-[#252535] px-1 rounded transition-colors">
+          <span [ngClass]="{
+            'text-emerald-400': line.includes('INFO'),
+            'text-amber-400': line.includes('WARN'),
+            'text-rose-500 font-bold': line.includes('ERROR'),
+            'text-blue-400': line.includes('DEBUG')
+          }">
+            <span class="opacity-30 select-none mr-2 text-gray-500">$</span>{{ line }}
+          </span>
+        </div>
+      </div>
+
+      <!-- BOTÓN DE PRUEBA SENTRY (Integrado con estilo) -->
+      <div class="bg-gray-900 px-4 py-3 text-center border-t border-gray-700">
+        <button (click)="throwTestError()" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-xs font-bold transition-all shadow-lg hover:shadow-red-900/30 uppercase tracking-widest">
+          <span>💣</span>
+          Simular Error Frontend (Sentry)
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

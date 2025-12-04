@@ -1,0 +1,147 @@
+<div class="w-full animate-fade-in-up relative">
+  
+  <!-- CABECERA Y FILTROS -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-[#151528] tracking-tight uppercase">
+        Gestión de Pedidos
+      </h1>
+      <p class="text-sm text-gray-500 font-medium mt-1">
+        Control de ventas y seguimiento.
+      </p>
+    </div>
+    
+    <div class="flex gap-3 items-center w-full md:w-auto">
+       <div class="relative group flex-1 md:flex-none">
+         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+           <svg class="h-4 w-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+         </div>
+         <input 
+            type="text" 
+            [ngModel]="searchTerm()" 
+            (ngModelChange)="searchTerm.set($event)"
+            placeholder="Buscar..." 
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 w-full md:w-64 shadow-sm transition-all"
+         >
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg px-4 py-2 flex items-center shadow-sm h-full font-mono text-sm whitespace-nowrap">
+          <span class="font-bold text-gray-400 mr-2">TOTAL:</span>
+          <span class="font-black text-[#151528]">{{ filteredPedidos().length }}</span>
+       </div>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-24 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div class="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Cargando pedidos...</p>
+    </div>
+  }
+
+  <!-- ERROR STATE -->
+  @if (error() && !isLoading()) {
+    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg flex items-center gap-3 shadow-sm animate-shake">
+       <svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+       <div>
+          <h3 class="text-sm font-bold text-red-800">Error de conexión</h3>
+          <p class="text-sm text-red-600">{{ error() }}</p>
+       </div>
+    </div>
+  }
+
+  <!-- TABLA DE PEDIDOS -->
+  @if (!isLoading() && !error()) {
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+      <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[900px]">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-black text-gray-500 uppercase tracking-wider">
+                <th class="px-6 py-4 sticky left-0 bg-gray-50 z-10">ID / Fecha</th>
+                <th class="px-6 py-4">Cliente</th>
+                <th class="px-6 py-4 text-right">Total</th>
+                <th class="px-6 py-4 text-center">Estado</th>
+                <th class="px-6 py-4 text-center">Pago</th>
+                <th class="px-6 py-4 text-center">Envío</th>
+                <th class="px-6 py-4 text-right sticky right-0 bg-gray-50 z-10">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (pedido of filteredPedidos(); track pedido.pedidoId) {
+                <tr class="hover:bg-gray-50 transition-colors group">
+                  <!-- ID -->
+                  <td class="px-6 py-4 sticky left-0 bg-white group-hover:bg-gray-50 z-10">
+                    <div class="flex flex-col">
+                      <span class="font-bold text-indigo-900 text-sm">#{{ pedido.pedidoId }}</span>
+                      <span class="text-[10px] text-gray-400 font-mono">{{ pedido.fecha | date:'dd/MM/yy HH:mm' }}</span>
+                    </div>
+                  </td>
+                  <!-- Cliente -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                       <div class="h-8 w-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold border border-gray-200 flex-shrink-0">
+                          {{ ($any(pedido).usuario?.nombre?.charAt(0) || 'U') | uppercase }}
+                       </div>
+                       <div class="flex flex-col min-w-0">
+                         <span class="text-xs font-bold text-gray-700 truncate max-w-[140px]">
+                            {{ $any(pedido).usuario?.nombre || 'Cliente Desconocido' }}
+                         </span>
+                         <span class="text-[10px] text-gray-400 truncate max-w-[140px]">
+                            {{ $any(pedido).usuario?.email }}
+                         </span>
+                       </div>
+                    </div>
+                  </td>
+                  <!-- Total -->
+                  <td class="px-6 py-4 text-right font-mono text-sm font-bold text-[#151528]">
+                    {{ pedido.total | currency:'S/ ' }}
+                  </td>
+                  <!-- Selectores -->
+                  <td class="px-6 py-4 text-center">
+                    <select [ngModel]="pedido.estado" (change)="onEstadoPedidoChange(pedido.pedidoId, $event)" 
+                            class="text-[10px] font-bold uppercase py-1 px-2 rounded border-gray-200 bg-gray-50 cursor-pointer focus:ring-indigo-500">
+                      @for (estado of estadosPedido; track estado) { <option [value]="estado">{{ estado }}</option> }
+                    </select>
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <select [ngModel]="pedido.estadoPago" (change)="onEstadoPagoChange(pedido.pedidoId, $event)"
+                            class="text-[10px] font-bold uppercase py-1 px-2 rounded border-gray-200 bg-gray-50 cursor-pointer focus:ring-indigo-500"
+                            [ngClass]="{'text-green-600': pedido.estadoPago === 'COMPLETADO'}">
+                      @for (e of estadosPago; track e) { <option [value]="e">{{ e }}</option> }
+                    </select>
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <select [ngModel]="pedido.estadoEnvio" (change)="onEstadoEnvioChange(pedido.pedidoId, $event)"
+                            class="text-[10px] font-bold uppercase py-1 px-2 rounded border-gray-200 bg-gray-50 cursor-pointer focus:ring-indigo-500">
+                      @for (e of estadosEnvio; track e) { <option [value]="e">{{ e.replace('_', ' ') }}</option> }
+                    </select>
+                  </td>
+
+                  <!-- Acciones -->
+                  <td class="px-6 py-4 text-right sticky right-0 bg-white group-hover:bg-gray-50 z-10">
+                    <div class="flex items-center justify-end gap-2">
+                        <!-- Botón PDF -->
+                        <button (click)="downloadPdf(pedido)" 
+                                [disabled]="isActionLoading"
+                                title="Descargar Boleta"
+                                class="p-1.5 rounded hover:bg-gray-100 text-gray-600 hover:text-indigo-600 transition-colors">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </button>
+
+                        <!-- Botón Eliminar -->
+                        <button (click)="onDeletePedido(pedido.pedidoId)" 
+                                [disabled]="isActionLoading"
+                                title="Eliminar Pedido"
+                                class="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+      </div>
+    </div>
+  }
+</div>

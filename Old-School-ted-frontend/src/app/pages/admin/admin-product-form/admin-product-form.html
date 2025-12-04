@@ -1,0 +1,216 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 font-sans">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+          {{ isEditMode() ? 'Editar Producto' : 'Nuevo Lanzamiento' }}
+        </h1>
+        <p class="mt-2 text-sm text-gray-500">Gestión de inventario, imágenes y personalización.</p>
+      </div>
+      <a routerLink="/admin/products" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+        ← Volver
+      </a>
+    </div>
+
+    <!-- Loading -->
+    @if (loading() && !currentProduct()) {
+       <div class="flex flex-col items-center justify-center py-20">
+         <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+         <p class="mt-4 text-gray-500">Cargando datos...</p>
+       </div>
+    }
+
+    <!-- Contenido Principal -->
+    @if (!loading() || currentProduct()) {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="lg:col-span-2 space-y-6">
+           
+           <!-- 1. Información General -->
+           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h2 class="text-lg font-bold text-gray-900 mb-6 border-b pb-2">Información General</h2>
+              
+              <form [formGroup]="productForm" (ngSubmit)="onSubmit()" id="mainForm">
+                 <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1 text-gray-700">Nombre</label>
+                    <input formControlName="nombre" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 py-2 px-3">
+                 </div>
+                 <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1 text-gray-700">Descripción</label>
+                    <textarea formControlName="descripcion" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 py-2 px-3"></textarea>
+                 </div>
+                 <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                       <label class="block text-sm font-semibold mb-1 text-gray-700">Precio (S/)</label>
+                       <input type="number" formControlName="precio" step="0.01" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 py-2 px-3">
+                    </div>
+                    <div>
+                       <label class="block text-sm font-semibold mb-1 text-gray-700">Categoría</label>
+                       <select formControlName="categoriaId" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 py-2 px-3 bg-white">
+                          <option value="" disabled>-- Seleccionar --</option>
+                          @for(cat of categorias(); track cat.idCategoria) {
+                             <option [value]="cat.idCategoria">{{ cat.nombre }}</option>
+                          }
+                       </select>
+                    </div>
+                 </div>
+                 <div class="grid grid-cols-2 gap-4 items-end">
+                    <div>
+                       <label class="block text-sm font-semibold mb-1 text-gray-700">Talla</label>
+                       <select formControlName="talla" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 py-2 px-3 bg-white">
+                          <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
+                       </select>
+                    </div>
+                    <div class="flex items-center pb-2">
+                       <input type="checkbox" formControlName="activo" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
+                       <label class="ml-2 text-sm font-medium text-gray-700">Activo</label>
+                    </div>
+                 </div>
+              </form>
+           </div>
+
+           <!-- 2. Personalización del Dorsal -->
+           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" [formGroup]="productForm">
+              <h2 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2 flex items-center">
+                 <span>Personalización del Dorsal</span>
+                 <span class="ml-2 bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">Retro</span>
+              </h2>
+
+              <!-- Color -->
+              <div class="mb-6">
+                 <label class="block text-sm font-semibold mb-2 text-gray-700">Color del Estampado</label>
+                 <div class="flex items-center space-x-4">
+                    <input type="color" formControlName="colorDorsal" class="h-10 w-20 p-1 rounded border border-gray-300 cursor-pointer">
+                    <div class="flex flex-col">
+                       <span class="text-xs text-gray-500">Color exacto del equipo.</span>
+                       <span class="text-xs font-mono bg-gray-100 px-1 rounded w-fit">{{ productForm.get('colorDorsal')?.value }}</span>
+                    </div>
+                 </div>
+              </div>
+
+              <!-- Leyendas -->
+              <div>
+                 <label class="block text-sm font-semibold mb-2 text-gray-700">Jugadores Históricos</label>
+                 
+                 @if (leyendasArray.controls.length === 0) {
+                    <div class="text-center py-3 bg-gray-50 border border-dashed border-gray-300 rounded-lg mb-3">
+                       <p class="text-xs text-gray-400">Sin jugadores añadidos.</p>
+                    </div>
+                 }
+
+                 <div class="space-y-3" formArrayName="leyendas">
+                    @for (leyenda of leyendasArray.controls; track $index) {
+                       <div [formGroupName]="$index" class="flex gap-3 items-start animate-fade-in">
+                          <div class="flex-1">
+                             <input type="text" formControlName="nombre" placeholder="Nombre (ej. RONALDINHO)" class="w-full border-gray-300 rounded-md py-1.5 px-3 text-sm uppercase focus:ring-indigo-500">
+                          </div>
+                          <div class="w-24">
+                             <input type="text" formControlName="numero" placeholder="N° (ej. 10)" class="w-full border-gray-300 rounded-md py-1.5 px-3 text-sm focus:ring-indigo-500">
+                          </div>
+                          <button type="button" (click)="removeLeyenda($index)" class="text-red-500 hover:text-red-700 p-2 transition-colors">
+                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                          </button>
+                       </div>
+                    }
+                 </div>
+
+                 <button type="button" (click)="addLeyenda()" class="mt-4 flex items-center text-sm text-indigo-600 font-semibold hover:text-indigo-800">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Añadir Jugador
+                 </button>
+              </div>
+           </div>
+
+           <!-- 3. Promociones (Solo Edit) -->
+           @if (isEditMode()) {
+             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Promociones</h2>
+                <div class="mb-4 flex flex-wrap gap-2">
+                   @for(promo of availablePromociones(); track promo.idPromocion) {
+                      <button (click)="onAssociatePromocion(promo.idPromocion)" class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-200 hover:bg-indigo-100">
+                         + {{ promo.codigo }} ({{ promo.descuento }}%)
+                      </button>
+                   }
+                </div>
+                <div class="space-y-2">
+                   @for(promo of currentProduct()?.promocionesAsociadas; track promo.idPromocion) {
+                      <div class="flex justify-between items-center bg-green-50 border border-green-100 p-2 rounded text-sm">
+                         <span class="text-green-900">{{ promo.descripcion }} ({{ promo.descuento }}%)</span>
+                         <button (click)="onDisassociatePromocion(promo.idPromocion)" class="text-red-500 font-bold">✕</button>
+                      </div>
+                   }
+                </div>
+             </div>
+           }
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="lg:col-span-1 space-y-6">
+           
+           <!-- Guardar -->
+           <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-10">
+              <button type="submit" form="mainForm" [disabled]="loading() || productForm.invalid" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition disabled:bg-gray-300">
+                 {{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}
+              </button>
+              @if(error()) { <div class="mt-3 text-red-600 text-xs text-center font-medium">{{ error() }}</div> }
+           </div>
+
+           <!-- Imágenes -->
+           @if (isEditMode() && currentProductId()) {
+              <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                 <h2 class="text-base font-bold text-gray-900 mb-4 border-b pb-2">Galería</h2>
+                 
+                 <!-- Portada -->
+                 <div class="mb-6">
+                    <label class="text-xs font-bold text-gray-500 uppercase block mb-2">Portada</label>
+                    <div class="relative group aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                       @if(currentProductImageUrl()) {
+                          <img [src]="currentProductImageUrl()" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x800?text=Sin+Img'">
+                       } @else {
+                          <div class="flex items-center justify-center h-full text-gray-400 text-xs">Sin Portada</div>
+                       }
+                       <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                          <label class="cursor-pointer bg-white px-3 py-1 rounded text-xs font-bold">Cambiar<input type="file" class="hidden" (change)="onMainFileSelected($event)"></label>
+                       </div>
+                    </div>
+                    @if(selectedMainFile()) {
+                       <div class="mt-2 flex justify-between items-center bg-indigo-50 p-2 rounded">
+                          <span class="text-xs truncate w-20">{{ selectedMainFile()?.name }}</span>
+                          <button (click)="uploadMainImage()" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded">Subir</button>
+                       </div>
+                    }
+                 </div>
+
+                 <!-- Galería -->
+                 <div>
+                    <div class="flex justify-between items-end mb-2">
+                       <label class="text-xs font-bold text-gray-500 uppercase">Vistas Adicionales</label>
+                       <span class="text-[10px] text-gray-400">{{ galleryImages().length }}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                       <label class="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500 text-gray-400">
+                          <span class="text-xl">+</span>
+                          <input type="file" class="hidden" (change)="onGalleryFileSelected($event)" [disabled]="isUploadingGallery()">
+                       </label>
+                       @for(img of galleryImages(); track img.id) {
+                          <div class="aspect-square relative group rounded overflow-hidden border border-gray-200">
+                             <img [src]="img.url" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x150?text=Err'">
+                             <button (click)="deleteGalleryImage(img.id)" class="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">✕</button>
+                          </div>
+                       }
+                    </div>
+                 </div>
+              </div>
+           } @else {
+              <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-center">
+                 <p class="text-sm text-blue-800 font-medium">ⓘ Guarda primero para subir imágenes.</p>
+              </div>
+           }
+        </div>
+      </div>
+    }
+  </div>
+</div>

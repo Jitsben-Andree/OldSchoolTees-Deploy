@@ -1,0 +1,236 @@
+/* 🔹 Fondo azul oscuro */
+.navbar {
+  background-color: #3c435c; /* azul elegante tipo navy */
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* 🔹 Logo */
+.logo-navbar {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo-navbar:hover {
+  transform: scale(1.05);
+}
+
+/* 🔹 Texto de marca */
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e0e7ff;
+  white-space: nowrap;
+}
+
+/* 🔹 Enlaces */
+nav a {
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* 🔹 Ícono carrito */
+svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 🔹 Responsive */
+@media (max-width: 640px) {
+  .logo-navbar {
+    height: 55px;
+  }
+  .brand-name {
+    font-size: 1.3rem;
+  }
+  .navbar {
+    height: auto;
+  }
+}
+/* === MENÚ HAMBURGUESA (solo móvil) === */
+.menu-toggle { display: none; } /* por si lo usas en otro lado */
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #2f3651;
+  width: 100%;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  animation: slideDown 0.25s ease;
+}
+
+.mobile-link {
+  color: #f2f2f2;
+  padding: 12px 18px;
+  text-decoration: none;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  display: block;
+}
+
+.mobile-link:hover {
+  background-color: rgba(255,255,255,0.15);
+}
+
+/* Animación */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsivo: cuando la pantalla es pequeña, solo se muestra el botón y el menú móvil */
+@media (max-width: 768px) {
+  /* oculta la sección de la derecha en móvil (usa tus utilidades Tailwind: hidden sm:flex ya lo hacen) */
+  /* aquí no sobreescribimos tu estilo, solo reforzamos que el contenedor principal pueda crecer */
+  .navbar { height: auto; }
+}
+
+/* En escritorio, oculta el menú móvil por completo */
+@media (min-width: 769px) {
+  .mobile-menu { display: none !important; }
+}
+/* === Botón Hamburguesa === */
+.menu-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.menu-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger {
+  width: 26px;
+  height: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #fff;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Animación al abrir */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Menú móvil */
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #2f3651;
+  width: 100%;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  animation: slideDown 0.3s ease;
+}
+
+.mobile-link {
+  color: #f2f2f2;
+  padding: 12px 18px;
+  text-decoration: none;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  display: block;
+}
+
+.mobile-link:hover {
+  background-color: rgba(255,255,255,0.15);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsivo */
+@media (min-width: 769px) {
+  .mobile-menu {
+    display: none !important;
+  }
+}
+/* === Botón Hamburguesa (☰) === */
+.menu-btn{
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.menu-btn:hover{ background: rgba(255,255,255,.1); }
+
+.hamburger{
+  width: 26px; height: 20px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.hamburger span{
+  height: 3px; width: 100%;
+  background: #fff; border-radius: 3px;
+  transition: all .3s ease;
+}
+/* animación a X al abrir */
+.hamburger.open span:nth-child(1){ transform: translateY(8px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity: 0; }
+.hamburger.open span:nth-child(3){ transform: translateY(-8px) rotate(-45deg); }
+
+/* === Menú móvil desplegable === */
+.mobile-menu{
+  display: flex; flex-direction: column;
+  background-color: #2f3651;
+  width: 100%;
+  border-top: 1px solid rgba(255,255,255,.15);
+  animation: slideDown .25s ease;
+}
+.mobile-link{
+  color:#f2f2f2; padding:12px 18px; display:block;
+  text-decoration:none; font-size:1rem; border-radius:6px;
+  transition: background .2s ease;
+}
+.mobile-link:hover{ background: rgba(255,255,255,.15); }
+
+@keyframes slideDown{
+  from{ opacity:0; transform: translateY(-8px); }
+  to  { opacity:1; transform: translateY(0); }
+}
+
+/* 📱 Breakpoints (Tailwind sm = 640px) */
+/* En <640px: se oculta el bloque de la derecha por tu "hidden sm:flex"
+   y aparece el botón hamburguesa por tu "sm:hidden" (ya en tu HTML). */
+@media (min-width: 640px){
+  /* En >=640px: ocultamos por completo el panel móvil */
+  .mobile-menu{ display: none !important; }
+}

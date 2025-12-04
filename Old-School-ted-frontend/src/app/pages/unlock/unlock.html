@@ -1,0 +1,170 @@
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  
+  <video
+    #bgVideo
+    autoplay
+    loop
+    muted
+    defaultMuted
+    playsinline
+    webkit-playsinline
+    x5-playsinline
+    preload="auto"
+    class="absolute inset-0 w-full h-full object-cover"
+    aria-hidden="true"
+  >
+    <source src="assets/video.mp4" type="video/mp4" />
+  </video>
+  <!-- Fin Video de Fondo -->
+
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <!-- Panel Principal con Animación de Entrada -->
+  <div class="relative z-10 mx-auto w-full max-w-[520px] bg-white/90 p-8 rounded-lg shadow-2xl backdrop-blur-md animate-fadeInUp">
+    
+    <!-- Título Dinámico -->
+    <h2 class="text-3xl font-bold text-center mb-6 text-gray-900">
+      {{ step === 1 ? 'Recuperar Cuenta' : 'Verificar Código' }}
+    </h2>
+
+    <!-- Mensajes Globales de Éxito y Error (con Animación) -->
+    <div *ngIf="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+      <span>{{ successMessage }}</span>
+    </div>
+    <div 
+      *ngIf="errorMessage" 
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4"
+      [class.animate-shake]="errorMessage"
+    >
+      <span>{{ errorMessage }}</span>
+    </div>
+
+
+    
+    <!-- ================= PASO 1: PEDIR EMAIL ================ -->
+    <form #step1Form="ngForm" (ngSubmit)="handleStep1Submit(step1Form)" *ngIf="step === 1" novalidate>
+      <p class="text-center text-gray-700 mb-6">
+        Ingresa tu correo electrónico. Te enviaremos un código para restablecer tu contraseña.
+      </p>
+
+      <div class="mb-5">
+        <label for="email_step1" class="mb-2 block text-base font-medium text-[#07074D]">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email_step1"
+          placeholder="tu@email.com"
+          [(ngModel)]="unlockData.email"
+          #email="ngModel"
+          required
+          email
+          [class.border-red-500]="email.invalid && email.touched"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md transition duration-300 ease-in-out"
+        />
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="email.errors?.['required']">El email es requerido.</span>
+          <span *ngIf="email.errors?.['email']">Email inválido.</span>
+        </div>
+      </div>
+
+      <div>
+        <button
+          [disabled]="step1Form.invalid || isSubmitting"
+          type="submit"
+          class="hover:shadow-lg w-full rounded-md bg-indigo-600 py-3 px-8 text-center text-base font-semibold text-white outline-none disabled:bg-gray-400 transition duration-300 hover:scale-[1.03]"
+        >
+          {{ isSubmitting ? 'Enviando...' : 'Siguiente' }}
+        </button>
+      </div>
+    </form>
+    <!-- ================= FIN PASO 1 ================= -->
+
+
+    <!-- ======== PASO 2: CÓDIGO Y NUEVA PASSWORD ======== -->
+    <form #step2Form="ngForm" (ngSubmit)="handleStep2Submit(step2Form)" *ngIf="step === 2" novalidate>
+      <p class="text-center text-gray-700 mb-6">
+        Enviamos un código a <strong>{{ unlockData.email }}</strong>.
+        Expira en 15 minutos.
+      </p>
+
+      <div class="mb-5">
+        <label for="code" class="mb-2 block text-base font-medium text-[#07074D]">Código de Verificación</label>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            name="code"
+            id="code"
+            placeholder="123456"
+            [(ngModel)]="unlockData.code"
+            #code="ngModel"
+            required
+            minlength="6"
+            maxlength="6"
+            [class.border-red-500]="code.invalid && code.touched"
+            class="flex-grow w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md transition duration-300 ease-in-out"
+          />
+          <button
+            type="button"
+            (click)="resendCode()"
+            [disabled]="isSubmitting"
+            class="flex-shrink-0 px-4 py-3 rounded-md bg-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-300 disabled:opacity-50 transition duration-300 hover:scale-[1.03]"
+          >
+            Reenviar Código
+          </button>
+        </div>
+        <div *ngIf="code.invalid && (code.dirty || code.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="code.errors?.['required']">El código es requerido.</span>
+          <span *ngIf="code.errors?.['minlength'] || code.errors?.['maxlength']">El código debe tener 6 dígitos.</span>
+        </div>
+      </div>
+
+      <!-- Nueva Contraseña -->
+      <div class="mb-5">
+        <label for="newPassword" class="mb-2 block text-base font-medium text-[#07074D]">Nueva Contraseña</label>
+        <input
+          type="password"
+          name="newPassword"
+          id="newPassword"
+          placeholder="Mínimo 6 caracteres"
+          [(ngModel)]="unlockData.newPassword"
+          #newPassword="ngModel"
+          required
+          minlength="6"
+          [class.border-red-500]="newPassword.invalid && newPassword.touched"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-4 text-base text-[#334155] outline-none focus:border-indigo-600 focus:shadow-md transition duration-300 ease-in-out"
+        />
+        <div *ngIf="newPassword.invalid && (newPassword.dirty || newPassword.touched)" class="text-red-500 text-sm mt-1">
+          <span *ngIf="newPassword.errors?.['required']">La nueva contraseña es requerida.</span>
+          <span *ngIf="newPassword.errors?.['minlength']">Debe tener al menos 6 caracteres.</span>
+        </div>
+      </div>
+
+      <div>
+        <button
+          [disabled]="step2Form.invalid || isSubmitting"
+          type="submit"
+          class="hover:shadow-lg w-full rounded-md bg-indigo-600 py-3 px-8 text-center text-base font-semibold text-white outline-none disabled:bg-gray-400 transition duration-300 hover:scale-[1.03]"
+        >
+          {{ isSubmitting ? 'Procesando...' : 'Recuperar Contraseña' }}
+        </button>
+      </div>
+    </form>
+ 
+
+    <!-- Links inferiores (común para ambos pasos) -->
+    <div class="mt-6 text-center border-t border-gray-300 pt-4 space-y-2">
+      <!-- Botón para volver al paso 1 -->
+      <button *ngIf="step === 2" (click)="step = 1" class="text-sm text-gray-600 hover:text-gray-900 underline">
+        ¿Usar un email diferente?
+      </button>
+
+      <div>
+        <a routerLink="/login" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+          Volver a Iniciar Sesión
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
