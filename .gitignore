@@ -1,0 +1,26 @@
+# --- SECRETOS (NUNCA SUBIR) ---
+.env
+
+# --- JAVA / SPRING BOOT ---
+target/
+*.class
+*.jar
+*.war
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- NODE / ANGULAR ---
+node_modules/
+dist/
+.angular/
+package-lock.json
+
+# --- IDEs ---
+.idea/
+.vscode/
+*.iml
+
+# --- SISTEMA ---
+.DS_Store
+Thumbs.db
