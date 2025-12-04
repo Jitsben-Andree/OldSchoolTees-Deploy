@@ -18,7 +18,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+    "http://localhost:4200", 
+    "http://localhost:3000", 
+    "http://localhost:8080",
+    "http://147.79.87.94:8098",
+    "http://147.79.87.94"
+})
 @Slf4j
 public class ProductoController {
 
