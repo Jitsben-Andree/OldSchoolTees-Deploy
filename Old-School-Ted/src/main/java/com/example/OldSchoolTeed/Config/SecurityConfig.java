@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll() // Monitoreo (Actuator)
 
-                        // .requestMatchers("/error-prueba").permitAll()
+                        .requestMatchers("/error-prueba").permitAll()
                         // .requestMatchers("/sentry-test").permitAll()
 
                         // Endpoints públicos de la tienda
